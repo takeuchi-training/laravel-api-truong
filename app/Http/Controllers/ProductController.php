@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProductPostRequest;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -17,7 +18,9 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return Product::all();
+        $products = Product::paginate(9);
+
+        return ProductResource::collection($products);
     }
 
     /**
@@ -27,10 +30,12 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function search($name) {
-        return Product::where('name', 'LIKE', '%' . $name . '%')
+        $product = Product::where('name', 'LIKE', '%' . $name . '%')
                 ->orWhere('description', 'LIKE', '%' . $name . '%')
                 ->orWhere('slug', 'LIKE', '%' . $name . '%')
                 ->get();
+
+        return new ProductResource($product);
     }
 
     /**
@@ -45,9 +50,11 @@ class ProductController extends Controller
             abort(403, "Sorry! You don't have permission.'");
         }
 
-        $product = $storeProductRequest->validated();
+        $productInputs = $storeProductRequest->validated();
 
-        return Product::create($product);
+        $product = Product::create($productInputs);
+
+        return new ProductResource($product);
     }
 
     /**
@@ -58,7 +65,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        return $product;
+        return new ProductResource($product);
     }
 
     /**
@@ -78,7 +85,7 @@ class ProductController extends Controller
 
         $product->update($updatedProduct);
 
-        return $product;
+        return new ProductResource($product);
     }
 
     /**
