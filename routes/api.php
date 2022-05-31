@@ -38,6 +38,7 @@ Route::prefix('/products')
 });
 
 Route::controller(UserController::class)->group(function() {
+    Route::get('/users', 'index')->middleware('auth:sanctum')->name('.index');
     Route::post('/register', 'register')->middleware('guest')->name('register');
     Route::post('/login', 'login')->middleware('guest')->name('login');
     Route::post('/logout', 'logout')->middleware('auth:sanctum')->name('.logout');

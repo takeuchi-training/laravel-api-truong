@@ -11,6 +11,10 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
+    public function index() {
+        return User::with('roles')->get();
+    }
+
     public function register(RegisterUserRequest $userRequest) {
         $user = User::create([
             'name' => $userRequest->validated()['name'],
@@ -18,32 +22,39 @@ class UserController extends Controller
             'password' => bcrypt($userRequest->validated()['password']),
         ]);
 
+        // $response = [
+        //     'id' => $user->id, 
+        //     'name' => $user->name, 
+        //     'email' => $user->email,
+        //     'token' => $user->createToken(env('APP_SECRET', Str::random()))->plainTextToken
+        // ];
+
+        return $user;
+    }
+
+    public function login(LoginUserRequest $request) {
+        $user = User::where('email', $request->validated()['email'])->with('roles')->first();
+        $userRoles = $user->roles()->get()->map(fn($role) => $role->id);
+        $token = '';
+
+        if (!$user || !Hash::check($request->validated()['password'], $user->password)) {
+            return [
+                'message' => 'Invalid email or password'
+            ];
+        }
+        
+        if ($userRoles->some(fn($roleId) => $roleId === 3)) {
+            $token = $user->createToken(env('APP_SECRET', Str::random()), [])->plainTextToken;
+        } else {
+            $token = $user->createToken(env('APP_SECRET', Str::random()), ['product_manipulate'])->plainTextToken;
+        }
+
         $response = [
             'id' => $user->id, 
             'name' => $user->name, 
             'email' => $user->email,
-            'token' => $user->createToken(env('APP_SECRET', Str::random()))->plainTextToken
+            'token' => $token
         ];
-
-        return $response;
-    }
-
-    public function login(LoginUserRequest $request) {
-        $response = [];
-        $user = User::where('email', $request->validated()['email'])->first();
-
-        if (!$user || !Hash::check($request->validated()['password'], $user->password)) {
-            $response = [
-                'message' => 'Invalid email or password'
-            ];
-        } else {
-            $response = [
-                'id' => $user->id, 
-                'name' => $user->name, 
-                'email' => $user->email,
-                'token' => $user->createToken(env('APP_SECRET', Str::random()))->plainTextToken
-            ];
-        }
 
         return $response;
     }

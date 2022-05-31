@@ -39,9 +39,13 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreProductRequest $request)
+    public function store(Request $request, StoreProductRequest $storeProductRequest)
     {
-        $product = $request->validated();
+        if (!$request->user()->tokenCan('product_manipulate')) {
+            abort(403, "Sorry! You don't have permission.'");
+        }
+
+        $product = $storeProductRequest->validated();
 
         return Product::create($product);
     }
@@ -64,9 +68,13 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(Request $request, UpdateProductRequest $updateProductRequest, Product $product)
     {
-        $updatedProduct = $request->validated();
+        if (!$request->user()->tokenCan('product_manipulate')) {
+            abort(403, "Sorry! You don't have permission.'");
+        }
+
+        $updatedProduct = $updateProductRequest->validated();
 
         $product->update($updatedProduct);
 
@@ -79,8 +87,12 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function destroy(Request $request, Product $product)
     {
+        if (!$request->user()->tokenCan('product_manipulate')) {
+            abort(403, "Sorry! You don't have permission.'");
+        }
+
         return $product->delete();
     }
 }
