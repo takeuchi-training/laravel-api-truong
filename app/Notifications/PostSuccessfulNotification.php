@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PostSuccessFullNotification extends Notification
+class PostSuccessfulNotification extends Notification
 {
     use Queueable;
 
@@ -44,8 +44,7 @@ class PostSuccessFullNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line('Product posted!')
-                    ->action('Product name: ' . $this->product->name, url('/'))
+                    ->line('Product "' . $this->product->name . '" posted!')
                     ->line('Thank you!');
     }
 

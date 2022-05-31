@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\ProductPost;
-use App\Notifications\PostSuccessFullNotification;
+use App\Notifications\PostSuccessfulNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -27,6 +27,6 @@ class NotifyAfterProductPost
      */
     public function handle(ProductPost $event)
     {
-        $event->user->notify(new PostSuccessFullNotification($event->product));
+        $event->user->notify(new PostSuccessfulNotification($event->product));
     }
 }
