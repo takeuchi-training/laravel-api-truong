@@ -42,11 +42,11 @@ class UserController extends Controller
                 'message' => 'Invalid email or password'
             ];
         }
-        
-        if ($userRoles->some(fn($roleId) => $roleId === 3)) {
-            $token = $user->createToken(env('APP_SECRET', Str::random()), [])->plainTextToken;
-        } else {
+
+        if ($userRoles->some(fn($roleId) => $roleId === 1 || $roleId === 2)) {
             $token = $user->createToken(env('APP_SECRET', Str::random()), ['product_manipulate'])->plainTextToken;
+        } else {
+            $token = $user->createToken(env('APP_SECRET', Str::random()), [])->plainTextToken;
         }
 
         $response = [

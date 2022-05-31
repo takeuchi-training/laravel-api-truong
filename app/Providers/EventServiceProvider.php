@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Events\ProductPost;
+use App\Listeners\NotifyAfterProductPost;
 use App\Models\User;
 use App\Observers\UserObserver;
 use Illuminate\Auth\Events\Registered;
@@ -20,6 +22,9 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        ProductPost::class => [
+            NotifyAfterProductPost::class
+        ]
     ];
 
     /**

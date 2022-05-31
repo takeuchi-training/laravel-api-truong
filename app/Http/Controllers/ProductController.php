@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ProductPost;
 use App\Http\Requests\ProductPostRequest;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use App\Notifications\PostSuccessFullNotification;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -46,13 +48,17 @@ class ProductController extends Controller
      */
     public function store(Request $request, StoreProductRequest $storeProductRequest)
     {
-        if (!$request->user()->tokenCan('product_manipulate')) {
+        $user = $request->user();
+
+        if (!$user->tokenCan('product_manipulate')) {
             abort(403, "Sorry! You don't have permission.'");
         }
 
         $productInputs = $storeProductRequest->validated();
 
         $product = Product::create($productInputs);
+
+        event(new ProductPost($user, $product));
 
         return new ProductResource($product);
     }

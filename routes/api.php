@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
+use App\Models\RoleUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -42,4 +43,15 @@ Route::controller(UserController::class)->group(function() {
     Route::post('/register', 'register')->middleware('guest')->name('register');
     Route::post('/login', 'login')->middleware('guest')->name('login');
     Route::post('/logout', 'logout')->middleware('auth:sanctum')->name('.logout');
+});
+
+Route::post('/add-role/{userId}/{roleId}', function($userId, $roleId) {
+    RoleUser::create([
+        'user_id' => $userId,
+        'role_id' => $roleId
+    ]);
+
+    return [
+        'message' => 'Role created.'
+    ];
 });
