@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -22,14 +23,16 @@ class UserController extends Controller
             'password' => bcrypt($userRequest->validated()['password']),
         ]);
 
-        // $response = [
-        //     'id' => $user->id, 
-        //     'name' => $user->name, 
-        //     'email' => $user->email,
-        //     'token' => $user->createToken(env('APP_SECRET', Str::random()))->plainTextToken
-        // ];
+        $response = [
+            'id' => $user->id, 
+            'name' => $user->name, 
+            'email' => $user->email,
+            'token' => $user->createToken(env('APP_SECRET', Str::random()))->plainTextToken
+        ];
 
-        return $user;
+        event(new Registered($user));
+
+        return $response;
     }
 
     public function login(LoginUserRequest $request) {
