@@ -50,11 +50,12 @@ class ProductController extends Controller
     {
         $user = $request->user();
 
-        if (!$user->tokenCan('product_manipulate')) {
-            abort(403, "Sorry! You don't have permission.'");
-        }
+        // if (!$user->tokenCan('product_manipulate')) {
+        //     abort(403, "Sorry! You don't have permission.'");
+        // }
 
         $productInputs = $storeProductRequest->validated();
+        $productInputs['user_id'] = $user->id;
 
         $product = Product::create($productInputs);
 
