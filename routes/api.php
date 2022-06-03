@@ -106,8 +106,8 @@ Route::prefix('/products')
             ->name('.product')
             ->group(function () {
         Route::get('/', 'show')->name('.show');
-        Route::put('/', 'update')->middleware('auth:api')->name('.update');
-        Route::delete('/', 'destroy')->middleware('auth:api')->name('.destroy');
+        Route::put('/', 'update')->middleware(['auth:api', 'scope:all,manipulate-product'])->name('.update');
+        Route::delete('/', 'destroy')->middleware(['auth:api', 'scope:all,manipulate-product'])->name('.destroy');
     });
 });
 
