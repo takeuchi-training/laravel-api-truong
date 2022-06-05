@@ -32,6 +32,7 @@ class ProductApiTest extends TestCase
         // Load data in DB
         $products = Product::factory(10)->create();
         $productIds = $products->map(fn ($product) => $product->id);
+        $firstProduct = $products[0];
 
         // Call index endpoint
         $response = $this->json(
@@ -39,15 +40,28 @@ class ProductApiTest extends TestCase
             $uri = "/api/products"
         );
 
-        // Asseert status
-        $response->assertStatus(200);
+        // dump($response->assertStatus(200)->json('data.0'));
+        // dump($firstProduct);
+
+        // Asseert
+        $response->assertStatus(200)
+                ->assertJson(fn (AssertableJson $json) =>
+                    $json->has('data', 10, fn($json) =>
+                        $json->where('id', $firstProduct->id)
+                            ->where('name', $firstProduct->name)
+                            ->where('description', $firstProduct->description)
+                            ->where('slug', $firstProduct->slug)
+                            ->where('price', "$firstProduct->price")
+                            ->etc()
+                    )
+                );
 
         // Verify records
-        $productData = $response->json('data');
+        // $productData = $response->json('data');
 
-        collect($productData)->each(
-            fn ($product) => $this->assertTrue($productIds->contains($product['id']))
-        );
+        // collect($productData)->each(
+        //     fn ($product) => $this->assertTrue($productIds->contains($product['id']))
+        // );
     }
 
     public function test_show_product() {
