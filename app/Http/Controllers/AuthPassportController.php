@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 
 class AuthPassportController extends Controller
 {
@@ -18,11 +19,19 @@ class AuthPassportController extends Controller
     }
 
     public function register(RegisterUserRequest $userRequest) {
-        $user = User::create([
-            'name' => $userRequest->validated()['name'],
-            'email' => $userRequest->validated()['email'],
-            'password' => bcrypt($userRequest->validated()['password']),
-        ]);
+        try {
+            //code...
+            $user = User::create([
+                'name' => $userRequest->validated()['name'],
+                'email' => $userRequest->validated()['email'],
+                'password' => bcrypt($userRequest->validated()['password']),
+            ]);
+        } catch (QueryException $exception) {
+            return [
+                'errorCode' => $exception->errorInfo[1],
+                'message' => $exception->getMessage()
+            ];
+        }
 
         return $user;
     }

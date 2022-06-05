@@ -54,9 +54,9 @@ use Illuminate\Support\Facades\URL;
 // });
 
 Route::post('/add-role/{userId}/{roleId}', function($userId, $roleId) {
-    if (!auth()->user->tokenCan('access_all')) {
-        abort(403, "Sorry! You don't have permission.'");
-    }
+    // if (!auth()->user->tokenCan('access_all')) {
+    //     abort(403, "Sorry! You don't have permission.'");
+    // }
 
     RoleUser::create([
         'user_id' => $userId,

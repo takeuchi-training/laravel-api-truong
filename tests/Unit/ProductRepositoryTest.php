@@ -6,10 +6,13 @@ use App\Models\Product;
 use App\Repositories\ProductRepository;
 use App\Repositories\ProductRepositoryInterface;
 use Illuminate\Database\QueryException;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ProductRepositoryTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_create() {
         // 1. Define the goal
         // Test if the function will actually create a record in the DB
