@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
 use App\Repositories\ProductRepositoryInterface;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -70,17 +71,9 @@ class ProductRepositoryTest extends TestCase
     }
 
     public function test_non_exist_delete() {
-        // 1. Define the goal
-        // Test if the function will actually delete a record in the DB
-        // 2. Replicate the environment / restriction
+        $this->expectException(ModelNotFoundException::class);
+        // $this->expectExceptionMessage('Sorry, there is no such product!');
         $repository = $this->app->make(ProductRepositoryInterface::class);
-        $dummyProductId = Product::factory(1)->make()->first()->id;
-
-        // 3. Define the source of truth
-
-        // 4. Compare the result
-        $result = $repository->deleteProduct($dummyProductId);
-
-        $this->assertSame(0, $result, "Product wasn't deleted");
+        $repository->deleteProduct(1);
     }
 }

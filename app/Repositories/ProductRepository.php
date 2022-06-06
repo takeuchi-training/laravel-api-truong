@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Product;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 
 class ProductRepository implements ProductRepositoryInterface {
@@ -35,6 +36,13 @@ class ProductRepository implements ProductRepositoryInterface {
     }
 
     public function deleteProduct($productId) {
-        return Product::destroy($productId);
+        $product = Product::findOrFail($productId);
+
+        // if ($product === null) {
+        //     throw new ModelNotFoundException("Sorry, there is no such product!");
+        // }
+
+        $product->delete();
+        // return Product::destroy($productId);
     }
 }
